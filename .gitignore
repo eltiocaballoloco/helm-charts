@@ -1,0 +1,48 @@
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# macOS metadata
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+*.swp
+*.swo
+
+# Helm chart build files
+charts/
+*.tgz
+helm-docs/
+crds/
+tmpcharts/
+
+# Kubernetes output files
+output/
+*.out
+
+# Editor/IDE junk
+.idea/
+.vscode/
+*.code-workspace
+
+# Logs and temp files
+*.log
+*.tmp
+*.bak
+*.lock
+
+# Python virtual environments (if using tools like `chart-testing`)
+.venv/
+venv/
+
+# Node modules (if using Helm plugins that depend on npm/yarn)
+node_modules/
+
+# Tiller history (for older Helm v2 usage)
+.tiller
+
+# Chart testing results
+junit_*.xml
+ct.log
