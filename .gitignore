@@ -12,7 +12,6 @@ Icon?
 *.swo
 
 # Helm chart build files
-charts/
 *.tgz
 helm-docs/
 crds/
