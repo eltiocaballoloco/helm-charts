@@ -10,17 +10,20 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
 
-      - name: Set up Helm
-        uses: azure/setup-helm@v1
+      - name: Install Helm 3.17.3
+        run: |
+          curl -fsSL https://get.helm.sh/helm-v3.17.3-linux-amd64.tar.gz | tar -xz
+          sudo mv linux-amd64/helm /usr/local/bin/helm
+
+      - name: Check Helm version
+        run: helm version
 
       - name: Lint Helm charts
-        run: helm lint ./main-charts
+        run: helm lint ./helm-charts
 
       - name: Package Helm charts
-        run: helm package ./main-charts
+        run: helm package ./helm-charts
 
       - name: Upload Helm chart to GitHub Releases
         uses: softprops/action-gh-release@v1
