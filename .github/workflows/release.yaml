@@ -17,10 +17,10 @@ jobs:
         uses: azure/setup-helm@v1
 
       - name: Lint Helm charts
-        run: helm lint ./charts
+        run: helm lint ./main-charts
 
       - name: Package Helm charts
-        run: helm package ./charts
+        run: helm package ./main-charts
 
       - name: Upload Helm chart to GitHub Releases
         uses: softprops/action-gh-release@v1
