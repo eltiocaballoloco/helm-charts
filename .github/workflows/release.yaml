@@ -66,14 +66,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push Helm charts and index.yaml to gh-pages
+      - name: Push Helm charts and index.yaml to gs-pages
         run: |
           git config user.name "eltiocaballoloco-bot"
           git config user.email "eltio@noreply.github.com"
-          git fetch origin gh-pages || git checkout --orphan gh-pages
-          git checkout gh-pages
+          git fetch origin gs-pages || git checkout --orphan gs-pages
+          git checkout gs-pages
           mkdir -p .
           cp -r cr-release/* .
           git add .
           git commit -m "Update Helm charts and index.yaml for version ${{ steps.chart_version.outputs.chart_version }}" || echo "No changes to commit"
-          git push origin gh-pages
+          git push origin gs-pages
