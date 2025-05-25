@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 
 
       - name: Install Helm 3.17.3
         run: |
@@ -52,3 +54,10 @@ jobs:
           files: '*.tgz'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install chart-releaser
+        uses: helm/chart-releaser-action@v1.5.0
+        with:
+          charts_dir: main-charts
+        env:
+          CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
