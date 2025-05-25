@@ -54,14 +54,14 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.create_tag.outputs.tag }}
-          files: '*.tgz'
+          files: '.cr-release-packages/*.tgz'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install chart-releaser
+      - name: Run chart-releaser-action
         uses: helm/chart-releaser-action@v1.5.0
         with:
-          charts_dir: .cr-release-packages
+          charts_dir: main-charts
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
