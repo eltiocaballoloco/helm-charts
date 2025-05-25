@@ -2,5 +2,5 @@ apiVersion: v2
 name: helm-charts
 description: A Helm chart to dpeloy k8s applications
 type: application
-version: 0.8.0
+version: 0.7.0
 appVersion: "1.0.0"

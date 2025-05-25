@@ -19,24 +19,26 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Install Helm 3.17.3
+      - name: Install Helm
         run: |
           curl -fsSL https://get.helm.sh/helm-v3.17.3-linux-amd64.tar.gz | tar -xz
           sudo mv linux-amd64/helm /usr/local/bin/helm
 
-      - name: Check Helm version
-        run: helm version
+      - name: Prepare chart directory
+        run: |
+          mkdir -p charts/tmp-chart
+          cp -r main-charts/* charts/tmp-chart/
 
-      - name: Lint Helm charts
-        run: helm lint ./main-charts
+      - name: Lint chart
+        run: helm lint charts/tmp-chart
 
-      - name: Extract Chart version
+      - name: Extract chart version
         id: chart_version
         run: |
           VERSION=$(grep '^version:' main-charts/Chart.yaml | awk '{print $2}')
           echo "chart_version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Create Git Tag from Chart.yaml
+      - name: Create Git tag
         id: create_tag
         run: |
           TAG="v${{ steps.chart_version.outputs.chart_version }}"
@@ -47,15 +49,12 @@ jobs:
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
       - name: Wait for tag propagation
-        run: |
-          echo "Waiting for Git tag to propagate..."
-          sleep 10
-          git fetch --tags
+        run: sleep 10
 
       - name: Run chart-releaser-action
         uses: helm/chart-releaser-action@v1.5.0
         with:
-          charts_dir: main-charts
+          charts_dir: charts
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -63,25 +62,18 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.create_tag.outputs.tag }}
-          files: 'cr-release/*.tgz'
+          files: cr-release/*.tgz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Debug cr-release folder
-        run: |
-          ls -la cr-release || echo "cr-release folder not found"
-
-      - name: Push Helm charts and index.yaml to gs-pages branch
+      - name: Push Helm charts and index.yaml to gh-pages
         run: |
           git config user.name "eltiocaballoloco-bot"
           git config user.email "eltio@noreply.github.com"
-          git fetch origin gs-pages
-          git checkout gs-pages
-          if [ -d "cr-release" ]; then
-            cp -r cr-release/* .
-            git add .
-            git commit -m "Update Helm charts and index.yaml for version ${{ steps.chart_version.outputs.chart_version }}" || echo "No changes to commit"
-            git push origin gs-pages
-          else
-            echo "No cr-release folder found, skipping push"
-          fi
+          git fetch origin gh-pages || git checkout --orphan gh-pages
+          git checkout gh-pages
+          mkdir -p .
+          cp -r cr-release/* .
+          git add .
+          git commit -m "Update Helm charts and index.yaml for version ${{ steps.chart_version.outputs.chart_version }}" || echo "No changes to commit"
+          git push origin gh-pages
