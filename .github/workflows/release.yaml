@@ -35,20 +35,20 @@ jobs:
           echo "chart_version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Create Git Tag from Chart.yaml
+        id: create_tag
         run: |
           TAG="v${{ steps.chart_version.outputs.chart_version }}"
           echo "Creating tag $TAG"
           git config user.name "eltiocaballoloco-bot"
           git config user.email "eltio@noreply.github.com"
-          git tag $TAG
-          git push origin $TAG
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git tag "$TAG"
+          git push origin "$TAG"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
 
       - name: Upload Helm chart to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ env.TAG }}
+          tag_name: ${{ steps.create_tag.outputs.tag }}
           files: '*.tgz'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
