@@ -1,8 +1,9 @@
 name: Publish Helm Chart to GitHub Pages
 on:
-  push:
-    tags:
-      - "v*"
+  workflow_run:
+    workflows: ["Release Helm Charts"]
+    types:
+      - completed
 
 permissions:
   contents: write
@@ -24,5 +25,6 @@ jobs:
         uses: helm/chart-releaser-action@v1.5.0
         with:
           charts_dir: main-charts
+          publish_branch: gs-pages
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
