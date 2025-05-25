@@ -1,9 +1,8 @@
 name: Publish Helm Chart to GitHub Pages
 on:
-  workflow_run:
-    workflows: ["Release Helm Charts"]
-    types:
-      - completed
+  push:
+    tags:
+      - "v*"
 
 permissions:
   contents: write
