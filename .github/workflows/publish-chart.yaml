@@ -26,4 +26,3 @@ jobs:
           charts_dir: main-charts
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
