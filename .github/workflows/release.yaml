@@ -30,7 +30,9 @@ jobs:
         run: helm lint ./main-charts
 
       - name: Package Helm charts
-        run: helm package ./main-charts
+        run: |
+          mkdir -p .cr-release-packages
+          helm package ./main-charts --destination .cr-release-packages
 
       - name: Extract Chart version
         id: chart_version
@@ -59,8 +61,7 @@ jobs:
       - name: Install chart-releaser
         uses: helm/chart-releaser-action@v1.5.0
         with:
-          charts_dir: main-charts
-          skip_packaging: true
+          charts_dir: .cr-release-packages
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
