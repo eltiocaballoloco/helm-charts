@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          fetch-tags: true
 
       - name: Install Helm 3.17.3
         run: |
@@ -62,13 +63,21 @@ jobs:
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Debug cr-release folder
+        run: |
+          ls -la cr-release || echo "cr-release folder not found"
+
       - name: Push Helm charts and index.yaml to gs-pages branch
         run: |
           git config user.name "eltiocaballoloco-bot"
           git config user.email "eltio@noreply.github.com"
           git fetch origin gs-pages
           git checkout gs-pages
-          cp -r cr-release/* .
-          git add .
-          git commit -m "Update Helm charts and index.yaml for version ${{ steps.chart_version.outputs.chart_version }}" || echo "No changes to commit"
-          git push origin gs-pages
+          if [ -d "cr-release" ]; then
+            cp -r cr-release/* .
+            git add .
+            git commit -m "Update Helm charts and index.yaml for version ${{ steps.chart_version.outputs.chart_version }}" || echo "No changes to commit"
+            git push origin gs-pages
+          else
+            echo "No cr-release folder found, skipping push"
+          fi
