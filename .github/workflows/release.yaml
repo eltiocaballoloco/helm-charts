@@ -48,7 +48,7 @@ jobs:
       - name: Upload Helm chart to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ env.TAG }}  # ✅ Explicitly tell it what tag to use
+          tag_name: ${{ env.TAG }}
           files: '*.tgz'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
