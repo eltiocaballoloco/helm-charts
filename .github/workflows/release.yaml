@@ -50,6 +50,12 @@ jobs:
           git push origin "$TAG"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
+      - name: Wait for tag propagation
+        run: |
+          echo "Waiting for Git tag to propagate..."
+          sleep 10
+          git fetch --tags
+
       - name: Upload Helm chart to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
