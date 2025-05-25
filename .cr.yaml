@@ -1,0 +1,6 @@
+owner: eltiocaballoloco
+git-repo: helm-charts
+charts-dir: charts
+index-path: index.yaml
+release-name-template: "{{ .Name }}-{{ .Version }}"
+pages-branch: gs-pages

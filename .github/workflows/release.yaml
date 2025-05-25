@@ -1,5 +1,4 @@
 name: Release Helm Charts
-
 on:
   push:
     branches:
@@ -24,55 +23,64 @@ jobs:
           curl -fsSL https://get.helm.sh/helm-v3.17.3-linux-amd64.tar.gz | tar -xz
           sudo mv linux-amd64/helm /usr/local/bin/helm
 
-      - name: Prepare chart directory structure
+      - name: Lint Helm charts
+        run: helm lint charts/main-charts
+
+      - name: Package Helm charts
         run: |
-          mkdir -p charts/eltiochart
-          cp -r main-charts/* charts/eltiochart/
+          mkdir -p .cr-release-packages
+          helm package charts/main-charts --destination .cr-release-packages
 
-      - name: Lint chart
-        run: helm lint charts/eltiochart
-
-      - name: Extract chart version
+      - name: Extract Chart version
         id: chart_version
         run: |
-          VERSION=$(grep '^version:' main-charts/Chart.yaml | awk '{print $2}')
+          VERSION=$(grep '^version:' charts/main-charts/Chart.yaml | awk '{print $2}')
           echo "chart_version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Create Git tag
-        id: create_tag
+      - name: Create Git Tag
         run: |
           TAG="v${{ steps.chart_version.outputs.chart_version }}"
           git config user.name "eltiocaballoloco-bot"
           git config user.email "eltio@noreply.github.com"
           git tag "$TAG"
           git push origin "$TAG"
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
 
       - name: Wait for tag propagation
-        run: sleep 5
+        run: |
+          echo "Waiting for Git tag to propagate..."
+          sleep 10
+          git fetch --tags
 
-      - name: Run chart-releaser-action
+      - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.5.0
         with:
           charts_dir: charts
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Helm chart to GitHub Releases
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ steps.create_tag.outputs.tag }}
-          files: cr-release/*.tgz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Debug cr-release folder
+        run: |
+          ls -la cr-release || echo "cr-release folder not found"
 
-      - name: Push Helm charts and index.yaml to gs-pages
+      - name: Push Helm charts and index.yaml to gs-pages branch
         run: |
           git config user.name "eltiocaballoloco-bot"
           git config user.email "eltio@noreply.github.com"
-          git fetch origin gs-pages || git checkout --orphan gs-pages
+          git fetch origin gs-pages
           git checkout gs-pages
-          cp -r cr-release/* .
-          git add .
-          git commit -m "Update Helm charts and index.yaml for version ${{ steps.chart_version.outputs.chart_version }}" || echo "No changes to commit"
-          git push origin gs-pages
+          if [ -d "cr-release" ]; then
+            cp -r cr-release/* .
+            git add .
+            git commit -m "Update Helm charts and index.yaml for version ${{ steps.chart_version.outputs.chart_version }}" || echo "No changes to commit"
+            git push origin gs-pages
+          else
+            echo "No cr-release folder found, skipping push"
+          fi
+
+      - name: Upload chart to GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.chart_version.outputs.chart_version }}
+          files: .cr-release-packages/*.tgz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
