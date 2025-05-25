@@ -1,4 +1,5 @@
 name: Release Helm Charts
+
 on:
   push:
     branches:
@@ -29,11 +30,6 @@ jobs:
       - name: Lint Helm charts
         run: helm lint ./main-charts
 
-      - name: Package Helm charts
-        run: |
-          mkdir -p .cr-release-packages
-          helm package ./main-charts --destination .cr-release-packages
-
       - name: Extract Chart version
         id: chart_version
         run: |
@@ -56,20 +52,20 @@ jobs:
           sleep 10
           git fetch --tags
 
+      - name: Run chart-releaser-action
+        uses: helm/chart-releaser-action@v1.5.0
+        with:
+          charts_dir: main-charts
+        env:
+          CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Upload Helm chart to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.create_tag.outputs.tag }}
-          files: '.cr-release-packages/*.tgz'
+          files: 'cr-release/*.tgz'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Run chart-releaser-action
-        uses: helm/chart-releaser-action@v1.5.0
-        with:
-          charts_dir: .cr-release-packages
-        env:
-          CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Debug cr-release folder
         run: |
