@@ -25,6 +25,23 @@ jobs:
       - name: Package Helm charts
         run: helm package ./main-charts
 
+      - name: Extract Chart version
+        id: chart_version
+        run: |
+          VERSION=$(grep '^version:' main-charts/Chart.yaml | awk '{print $2}')
+          echo "chart_version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create Git Tag from Chart.yaml
+        run: |
+          TAG="v${{ steps.chart_version.outputs.chart_version }}"
+          echo "Creating tag $TAG"
+          git config user.name "eltiocaballoloco-bot"
+          git config user.email "eltio@noreply.github.com"
+          git tag $TAG
+          git push origin $TAG
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Upload Helm chart to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
