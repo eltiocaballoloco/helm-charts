@@ -5,6 +5,7 @@ Charts used to deploy services to k8s.
 ```bash
 helm repo add eltio https://eltiocaballoloco.github.io/helm-charts
 helm search repo eltio
+helm repo update
 ```
 
 ## Test the output of charts
