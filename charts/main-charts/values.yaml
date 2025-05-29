@@ -5,7 +5,7 @@ application:
   namespace: hello-app
 
 imagePullSecrets:
-  enabled: true
+  enabled: false
   secrets:
     - my-docker-secret
     - another-secret
