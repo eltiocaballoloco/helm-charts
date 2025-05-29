@@ -13,3 +13,15 @@ helm repo update
 cd charts
 helm template example ./main-charts -f ./main-charts/values.yaml > output.yaml
 ```
+
+## Using charts locally
+To use the charts locally it is possible execute the following command
+```bash
+helm template --debug --dry-run \
+--set debug=true \
+--release-name your-release-name \
+--repo https://eltiocaballoloco.github.io/helm-charts \
+-f values.yaml \
+-f local-secret.yaml \
+main-charts > output.yaml
+```
