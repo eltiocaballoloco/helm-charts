@@ -121,6 +121,14 @@ spec:
       {{- end }}
       {{- end }}
 
+      {{- $hasVolumes := false }}
+      {{- range .Values.containerConfigs }}
+        {{- if or .extraConfigMapFiles .extraSecretFiles }}
+          {{- $hasVolumes = true }}
+        {{- end }}
+      {{- end }}
+
+      {{- if $hasVolumes }}
       volumes:
         {{- range $cfg := .Values.containerConfigs }}
           {{- $containerName := .name }}
@@ -150,3 +158,4 @@ spec:
             {{- end }}
           {{- end }}
         {{- end }}
+      {{- end }}
