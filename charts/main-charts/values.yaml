@@ -4,6 +4,12 @@ application:
   name: hello-world-1
   namespace: hello-app
 
+imagePullSecrets:
+  enabled: true
+  secrets:
+    - my-docker-secret
+    - another-secret
+
 replicaCount: 1
 
 service:

@@ -45,3 +45,4 @@ node_modules/
 # Chart testing results
 junit_*.xml
 ct.log
+charts/output.yaml

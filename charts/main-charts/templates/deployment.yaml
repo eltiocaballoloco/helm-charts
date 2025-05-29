@@ -108,6 +108,19 @@ spec:
 
         {{- end }}
 
+      {{- if .Values.imagePullSecrets }}
+      {{- if (default false .Values.imagePullSecrets.enabled) }}
+      imagePullSecrets:
+        {{- if .Values.imagePullSecrets.secrets }}
+          {{- range .Values.imagePullSecrets.secrets }}
+        - name: {{ . }}
+          {{- end }}
+        {{- else }}
+        - name: docker-credentials
+        {{- end }}
+      {{- end }}
+      {{- end }}
+
       volumes:
         {{- range $cfg := .Values.containerConfigs }}
           {{- $containerName := .name }}
