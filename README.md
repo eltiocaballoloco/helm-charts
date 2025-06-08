@@ -22,11 +22,12 @@ helm template \
 To use the charts locally it is possible execute the following command
 ```bash
 helm template --debug --dry-run \
---set debug=true \
---release-name your-app-name \
---namespace your-namespace \
---repo https://eltiocaballoloco.github.io/helm-charts \
--f values.yaml \
--f local-secret.yaml \
-main-charts > output.yaml
+    --set debug=true \
+    --release-name your-app-name \
+    --namespace your-namespace \
+    main-charts \
+    --repo https://eltiocaballoloco.github.io/helm-charts \
+    -f values.yaml \
+    -f local-secret.yaml \
+    main-charts > output.yaml
 ```
