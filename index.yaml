@@ -3,6 +3,16 @@ entries:
   main-charts:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2025-06-08T17:30:11.971667782Z"
+    description: A Helm chart to dpeloy k8s applications
+    digest: c5ea133fa4d383a1f663dbab2e03b41ad1222decfcf0cf227fad032376129344
+    name: main-charts
+    type: application
+    urls:
+    - main-charts-0.4.0.tgz
+    version: 0.4.0
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2025-05-29T16:52:08.766798074Z"
     description: A Helm chart to dpeloy k8s applications
     digest: db901ed00890a0e5cb28f9c821846f602640896dac6efc36cec7832ca37f8f5a
@@ -41,4 +51,4 @@ entries:
     urls:
     - main-charts-0.1.0.tgz
     version: 0.1.0
-generated: "2025-05-29T16:52:08.766819314Z"
+generated: "2025-06-08T17:30:11.97168799Z"
