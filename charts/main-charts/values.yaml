@@ -1,16 +1,10 @@
 # Values file template, to configure the secrets or configmaps in the section "containerConfigs"
 # set the same 'name', defined in containers property, to match the containers.
-application:
-  name: hello-world-1
-  namespace: hello-app
-
 imagePullSecrets:
   enabled: false
   secrets:
     - my-docker-secret
     - another-secret
-
-replicaCount: 1
 
 service:
   type: ClusterIP
@@ -64,6 +58,8 @@ containers:
 
 # Configurations below have to be defined in another values usually,
 # because can contains values which change from env to env or used to defined secrets.
+replicaCount: 1
+
 ingress:
   enabled: true
   host: hello-1.dev.dalecosta.com

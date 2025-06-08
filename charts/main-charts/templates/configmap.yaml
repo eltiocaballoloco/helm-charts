@@ -1,3 +1,4 @@
+{{- $root := . }}
 {{- range $container := .Values.containerConfigs }}
   {{- $extraVars := default (list) $container.extraConfigMapVars }}
   {{- $extraFiles := default (list) $container.extraConfigMapFiles }}
@@ -7,7 +8,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: "{{ $container.name }}-{{ $configMap.name }}"
-  namespace: {{ $.Values.application.namespace }}
+  namespace: {{ $root.Release.Namespace }}
 data:
   {{- range $key, $val := $configMap.data }}
     {{- if contains "\n" $val }}
